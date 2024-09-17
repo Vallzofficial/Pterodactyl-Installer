@@ -21,10 +21,10 @@ set -e
 #   You should have received a copy of the GNU General Public License                #
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.           #
 #                                                                                    #
-# https://github.com/pterodactyl-installer/pterodactyl-installer/blob/master/LICENSE #
+# https://github.com/vallzofficial/pterodactyl-installer/blob/master/LICENSE #
 #                                                                                    #
 # This script is not associated with the official Pterodactyl Project.               #
-# https://github.com/pterodactyl-installer/pterodactyl-installer                     #
+# https://github.com/vallzofficial/pterodactyl-installer                     #
 #                                                                                    #
 ######################################################################################
 
@@ -125,7 +125,7 @@ welcome() {
   output "Pterodactyl panel installation script @ $SCRIPT_RELEASE"
   output ""
   output "Copyright (C) 2018 - 2024, Vilhelm Prytz, <vilhelm@prytznet.se>"
-  output "https://github.com/pterodactyl-installer/pterodactyl-installer"
+  output "https://github.com/vallzofficial/pterodactyl-installer"
   output ""
   output "This script is not associated with the official Pterodactyl Project."
   output ""
@@ -153,9 +153,9 @@ get_latest_versions() {
 }
 
 update_lib_source() {
-  GITHUB_URL="$GITHUB_BASE_URL/$GITHUB_SOURCE"
+  GITHUB_URL="$GITHUB_BASE_URL/"master/
   rm -rf /tmp/lib.sh
-  curl -sSL -o /tmp/lib.sh "$GITHUB_URL"/lib/lib.sh
+  curl -sSL -o /tmp/lib.sh "$GITHUB_URL"lib/lib.sh
   # shellcheck source=lib/lib.sh
   source /tmp/lib.sh
 }
