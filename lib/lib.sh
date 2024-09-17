@@ -153,9 +153,8 @@ get_latest_versions() {
 }
 
 update_lib_source() {
-  GITHUB_URL="$GITHUB_BASE_URL/"master/
   rm -rf /tmp/lib.sh
-  curl -sSL -o /tmp/lib.sh "$GITHUB_URL"lib/lib.sh
+  curl -sSL -o /tmp/lib.sh https://raw.githubusercontent.com/vallzofficial/pterodactyl-installer/master/lib/lib.sh
   # shellcheck source=lib/lib.sh
   source /tmp/lib.sh
 }
