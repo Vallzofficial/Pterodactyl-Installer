@@ -66,20 +66,22 @@ while [ "$done" == false ]; do
     "panel"
     "wings"
     "panel;wings"
+    # "uninstall"
+
     "panel_canary"
     "wings_canary"
     "panel_canary;wings_canary"
     "uninstall_canary"
   )
 
-  output "Apa Yang Kamu Ingin Install?"
+  output "What would you like to do?"
 
   for i in "${!options[@]}"; do
-    echo -e "[${GREEN}$i${RESET}] ${CYAN}${options[$i]}${RESET}"
+    output "[$i] ${options[$i]}"
   done
 
-  echo -n -e "* Silahkan Pilih [0-$(( ${#actions[@]} - 1 ))]: "
-    read -r action
+  echo -n "* Input 0-$((${#actions[@]} - 1)): "
+  read -r action
 
   [ -z "$action" ] && error "Input is required" && continue
 
