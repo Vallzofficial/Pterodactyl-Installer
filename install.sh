@@ -1,4 +1,3 @@
-#!/bin/bash
 
 set -e
 
@@ -67,18 +66,30 @@ execute() {
 }
 
 welcome ""
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+MAGENTA="\e[35m"
+CYAN="\e[36m"
+RESET="\e[0m"
+display_step_by_step() {
+    local text="$1"
+    local color="$2"
+    for (( i=0; i<${#text}; i++ )); do
+        echo -n -e "${color}${text:i:1}${RESET}"  # Tampilkan satu karakter dengan warna
+        sleep 0.1                                  # Jeda 0.1 detik
+    done
+    echo  # Pindah ke baris berikutnya
+}
 
+display_step_by_step "Selamat Datang Di Script Auto Installer Panel By VallzOfficialScript By VallzOfficial" "$GREEN"
+display_step_by_step "Script By © Vallzoficial" "$BLUE"
 done=false
 while [ "$done" == false ]; do
   options=(
-    "Install the panel"
+    "Install Panel"
     "Install Wings"
-    "Install both [0] and [1] on the same machine (wings script runs after panel)"
-    # "Uninstall panel or wings\n"
-
-    "Install panel with canary version of the script (the versions that lives in master, may be broken!)"
-    "Install Wings with canary version of the script (the versions that lives in master, may be broken!)"
-    "Install both [3] and [4] on the same machine (wings script runs after panel)"
     "Uninstall panel or wings with canary version of the script (the versions that lives in master, may be broken!)"
   )
 
