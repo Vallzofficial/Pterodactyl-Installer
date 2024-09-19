@@ -1,23 +1,59 @@
 #!/bin/bash
 
 set -e
+
+######################################################################################
+#                                                                                    #
+# Project 'pterodactyl-installer'                                                    #
+#                                                                                    #
+# Copyright (C) 2018 - 2024, Vilhelm Prytz, <vilhelm@prytznet.se>                    #
+#                                                                                    #
+#   This program is free software: you can redistribute it and/or modify             #
+#   it under the terms of the GNU General Public License as published by             #
+#   the Free Software Foundation, either version 3 of the License, or                #
+#   (at your option) any later version.                                              #
+#                                                                                    #
+#   This program is distributed in the hope that it will be useful,                  #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of                   #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                    #
+#   GNU General Public License for more details.                                     #
+#                                                                                    #
+#   You should have received a copy of the GNU General Public License                #
+#   along with this program.  If not, see <https://www.gnu.org/licenses/>.           #
+#                                                                                    #
+# https://github.com/pterodactyl-installer/pterodactyl-installer/blob/master/LICENSE #
+#                                                                                    #
+# This script is not associated with the official Pterodactyl Project.               #
+# https://github.com/pterodactyl-installer/pterodactyl-installer                     #
+#                                                                                    #
+######################################################################################
+
 export GITHUB_SOURCE="v1.1.0"
 export SCRIPT_RELEASE="v1.1.0"
-export GITHUB_BASE_URL="https://raw.githubusercontent.com/vallzofficial/pterodactyl-installer"
+export GITHUB_BASE_URL="https://raw.githubusercontent.com/pterodactyl-installer/pterodactyl-installer"
 
-# Cek untuk curl
+LOG_PATH="/var/log/pterodactyl-installer.log"
+
+# check for curl
 if ! [ -x "$(command -v curl)" ]; then
-  echo -e "* curl is required in order for this script to work."
-  echo -e "* install using apt (Debian and derivatives) or yum/dnf (CentOS)"
+  echo "* curl is required in order for this script to work."
+  echo "* install using apt (Debian and derivatives) or yum/dnf (CentOS)"
   exit 1
 fi
 
-# Ambil dan jalankan lib.sh
+# Always remove lib.sh, before downloading it
 [ -f /tmp/lib.sh ] && rm -rf /tmp/lib.sh
-curl -sSL -o /tmp/lib.sh "$GITHUB_BASE_URL/master/lib/lib.sh"
+curl -sSL -o /tmp/lib.sh https://raw.githubusercontent.com/vallzofficial/pterodactyl-installer/master/lib/lib.sh
+# shellcheck source=lib/lib.sh
 source /tmp/lib.sh
 
 execute() {
+  echo -e "\n\n* pterodactyl-installer $(date) \n\n" >>$LOG_PATH
+
+  [[ "$1" == *"canary"* ]] && export GITHUB_SOURCE="master" && export SCRIPT_RELEASE="canary"
+  update_lib_source
+  run_ui "${1//_canary/}" |& tee -a $LOG_PATH
+
   if [[ -n $2 ]]; then
     echo -e -n "* Installation of $1 completed. Do you want to proceed to $2 installation? (y/N): "
     read -r CONFIRM
@@ -32,34 +68,18 @@ execute() {
 
 welcome ""
 
-# Kode warna ANSI
-RED="\e[31m"
-GREEN="\e[32m"
-YELLOW="\e[33m"
-BLUE="\e[34m"
-MAGENTA="\e[35m"
-CYAN="\e[36m"
-RESET="\e[0m"
-
-# Fungsi untuk menampilkan teks bertahap dengan warna
-display_step_by_step() {
-    local text="$1"
-    local color="$2"
-    for (( i=0; i<${#text}; i++ )); do
-        echo -n -e "${color}${text:i:1}${RESET}"  # Tampilkan satu karakter dengan warna
-        sleep 0.1                                  # Jeda 0.1 detik
-    done
-    echo  # Pindah ke baris berikutnya
-}
-
-display_step_by_step "Selamat datang di Pterodactyl Installer, By Vallzofficial!" "$GREEN"
-display_step_by_step "Prosess menampilkan menu....." "$BLUE"
-
 done=false
 while [ "$done" == false ]; do
   options=(
-    "Install Panel"
+    "Install the panel"
     "Install Wings"
+    "Install both [0] and [1] on the same machine (wings script runs after panel)"
+    # "Uninstall panel or wings\n"
+
+    "Install panel with canary version of the script (the versions that lives in master, may be broken!)"
+    "Install Wings with canary version of the script (the versions that lives in master, may be broken!)"
+    "Install both [3] and [4] on the same machine (wings script runs after panel)"
+    "Uninstall panel or wings with canary version of the script (the versions that lives in master, may be broken!)"
   )
 
   actions=(
@@ -90,5 +110,5 @@ while [ "$done" == false ]; do
   [[ " ${valid_input[*]} " =~ ${action} ]] && done=true && IFS=";" read -r i1 i2 <<<"${actions[$action]}" && execute "$i1" "$i2"
 done
 
-# Hapus lib.sh agar versi terbaru diunduh saat skrip dijalankan lagi.
+# Remove lib.sh, so next time the script is run the, newest version is downloaded.
 rm -rf /tmp/lib.sh
