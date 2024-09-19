@@ -52,7 +52,7 @@ display_step_by_step() {
     echo  # Pindah ke baris berikutnya
 }
 
-display_step_by_step "Selamat datang di Pterodactyl Installer, Vallzofficial!" "$GREEN"
+display_step_by_step "Selamat datang di Pterodactyl Installer, By Vallzofficial!" "$GREEN"
 display_step_by_step "Prosess menampilkan menu....." "$BLUE"
 
 done=false
@@ -79,16 +79,13 @@ while [ "$done" == false ]; do
   done
 
   echo -n -e "* Silahkan Pilih [0-$(( ${#actions[@]} - 1 ))]: "
-  read -r action
+    read -r action
 
   [ -z "$action" ] && error "Input is required" && continue
 
-  valid_input=("$(for ((i = 0; i <= ${#actions[@]} - 1; i++)); do echo "${i}"; done)")
+  valid_input=("$(for ((i = 0; i <= ${#actions[@]} - 1; i += 1)); do echo "${i}"; done)")
   [[ ! " ${valid_input[*]} " =~ ${action} ]] && error "Invalid option"
-  done=true
-
-  IFS=";" read -r i1 i2 <<<"${actions[$action]}"
-  execute "$i1" "$i2"
+  [[ " ${valid_input[*]} " =~ ${action} ]] && done=true && IFS=";" read -r i1 i2 <<<"${actions[$action]}" && execute "$i1" "$i2"
 done
 
 # Hapus lib.sh agar versi terbaru diunduh saat skrip dijalankan lagi.
